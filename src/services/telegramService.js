@@ -1,10 +1,9 @@
-exports.enviarAlerta = async (monto, detalle, fechaHora) => {
+exports.enviarAlerta = async (chatId, monto, detalle, fechaHora, nombreNegocio) => {
     try {
         const token = process.env.TELEGRAM_BOT_TOKEN;
-        const chatId = process.env.TELEGRAM_CHAT_ID;
 
         if (!token || !chatId) {
-            console.log('⚠️ [Telegram] Token o ChatID no configurados. Alerta simulada en consola.');
+            console.log('⚠️ [Telegram] Token o ChatID del cliente no configurados. Alerta simulada.');
             return;
         }
 
@@ -12,6 +11,7 @@ exports.enviarAlerta = async (monto, detalle, fechaHora) => {
         const detalleLimpio = detalle ? detalle.replace(/[*_`[\]]/g, '') : '';
 
         const mensaje = `🚨 *¡PAGO YAPE CONFIRMADO!* 🚨\n\n` +
+                        `🏪 *Negocio:* ${nombreNegocio}\n` +
                         `💰 *Monto:* S/ ${monto}\n` +
                         `📋 *Detalle:* ${detalleLimpio}\n` +
                         `⏰ *Hora:* ${fechaHora}\n\n` +
@@ -32,7 +32,7 @@ exports.enviarAlerta = async (monto, detalle, fechaHora) => {
         const data = await response.json();
 
         if (data.ok) {
-            console.log('✅ Alerta enviada a Telegram correctamente.');
+            console.log(`✅ Alerta enviada a Telegram correctamente para el negocio: ${nombreNegocio}`);
         } else {
             console.error('❌ Telegram rechazó el mensaje:', data.description);
         }
